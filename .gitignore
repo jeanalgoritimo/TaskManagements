@@ -1,0 +1,90 @@
+## Ignore arquivos do Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## Ignore binários e objetos compilados
+bin/
+obj/
+[Bb]in/
+[Oo]bj/
+
+## Ignore pacotes
+*.nupkg
+*.snupkg
+packages/
+*.nuspec
+
+## Ignore arquivos de build
+*.dll
+*.exe
+*.app
+*.log
+
+## Ignore arquivos temporários
+*.tmp
+*.temp
+*.bak
+*.cache
+
+## Ignore diretórios do Rider e JetBrains
+.idea/
+*.sln.iml
+
+## Ignore logs
+*.log
+
+## Ignore arquivos de publicação
+publish/
+out/
+
+## Ignore arquivos do sistema
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+## Ignore diretórios do Mac e Linux
+.DS_Store
+*.swp
+
+## Ignore arquivos do Windows
+*.~*
+
+## Ignore secrets e configurações locais
+secrets.json
+
+## Ignore dependências do .NET
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+## Ignore arquivos do Visual Studio Code
+.vscode/
+
+## Ignore configurações de testes
+TestResults/
+*.coverage
+*.coveragexml
+*.testsettings
+*.vsmdi
+*.vsp
+*.vspx
+*.sap
+*.cachefile
+
+## Ignore arquivos do Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+## Ignore arquivos do Azure Functions
+local.settings.json
+
+## Ignore diretórios de publicação de docker ou containers
+.docker/
+
+## Ignore arquivos de banco local
+*.mdf
+*.ldf
