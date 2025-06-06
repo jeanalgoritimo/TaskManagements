@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UserproTasks.Application.DTOs
+﻿ 
+namespace UserProTasks.Application.DTOs
 {
     public class ProjetoDto
     {
@@ -14,5 +9,7 @@ namespace UserproTasks.Application.DTOs
         public DateTime DataCriacao { get; set; }
         public Guid UsuarioId { get; set; }
         public string NomeUsuario { get; set; }
+        public int QuantidadeTarefasPendentes { get; set; } // Para a regra de remoção
+        public int QuantidadeTarefasConcluidas { get; set; }
     }
 }

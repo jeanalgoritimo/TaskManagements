@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaskManager.Domain.Entities;
+﻿using TaskManager.Domain.Entities;
 
-namespace TaskManager.Application.Interfaces
+namespace UserProTasks.Application.Interfaces
 {
     public interface IProjetoRepository
     {
         Task<Projeto> GetByIdAsync(Guid id);
-        Task<List<Projeto>> GetByUsuarioIdAsync(Guid usuarioId);
+        Task<Projeto> GetByIdWithTasksAsync(Guid id); // Novo: Incluir tarefas para verificação de remoção
+        Task<IEnumerable<Projeto>> GetAllByUserIdAsync(Guid userId); // Novo: Listar projetos do usuário
         Task AddAsync(Projeto projeto);
-        Task RemoveAsync(Projeto projeto);
+        Task UpdateAsync(Projeto projeto);
+        Task DeleteAsync(Projeto projeto);
         Task SaveChangesAsync();
     }
 }
