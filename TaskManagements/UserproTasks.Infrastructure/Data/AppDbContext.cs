@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TaskManager.Domain.Entities;
 
 namespace UserProTasks.Infrastructure.Data
@@ -26,8 +25,11 @@ namespace UserProTasks.Infrastructure.Data
                 entity.Property(e => e.ProjetoId).ValueGeneratedOnAdd();
                 entity.Property(e => e.DataCriacao).HasColumnType("timestamp with time zone");
 
+                // Adicione esta linha para configurar a propriedade FuncaoUsuario
+                entity.Property(e => e.FuncaoUsuario).HasMaxLength(50); // Defina um comprimento razoável para a função
+
                 entity.HasMany(p => p.Tarefas)
-                      .WithOne(t => t.Projeto) // Adicionado propriedade de navegação inversa em Tarefa para ser explícito
+                      .WithOne(t => t.Projeto)
                       .HasForeignKey(t => t.ProjetoId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
@@ -47,14 +49,14 @@ namespace UserProTasks.Infrastructure.Data
 
                 // Relacionamento Um-Para-Muitos com Comentarios
                 entity.HasMany(t => t.Comentarios)
-                      .WithOne(c => c.Tarefa) // Adicionado propriedade de navegação inversa em Comentario
-                      .HasForeignKey(c => c.TarefaId) // FK explícita
+                      .WithOne(c => c.Tarefa)
+                      .HasForeignKey(c => c.TarefaId)
                       .OnDelete(DeleteBehavior.Cascade);
 
                 // Relacionamento Um-Para-Muitos com HistoricoTarefa
                 entity.HasMany(t => t.Historico)
-                      .WithOne(h => h.Tarefa) // Adicionado propriedade de navegação inversa em HistoricoTarefa
-                      .HasForeignKey(h => h.TarefaId) // FK explícita
+                      .WithOne(h => h.Tarefa)
+                      .HasForeignKey(h => h.TarefaId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -64,11 +66,6 @@ namespace UserProTasks.Infrastructure.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
                 entity.Property(e => e.DataCriacao).HasColumnType("timestamp with time zone");
-
-                // Relacionamento inverso com Tarefa (com propriedade de navegação)
-                //entity.HasOne(c => c.Tarefa) // Se Comentario.Tarefa existir
-                //      .WithMany(t => t.Comentarios)
-                //      .HasForeignKey(c => c.TarefaId);
             });
 
             // Mapeamento para HistoricoTarefa
@@ -77,11 +74,6 @@ namespace UserProTasks.Infrastructure.Data
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Id).ValueGeneratedOnAdd();
                 entity.Property(e => e.Data).HasColumnType("timestamp with time zone");
-
-                // Relacionamento inverso com Tarefa (com propriedade de navegação)
-                //entity.HasOne(h => h.Tarefa) // Se HistoricoTarefa.Tarefa existir
-                //      .WithMany(t => t.Historico)
-                //      .HasForeignKey(h => h.TarefaId);
             });
         }
     }

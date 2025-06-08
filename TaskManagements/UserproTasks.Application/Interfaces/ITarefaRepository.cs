@@ -1,13 +1,15 @@
-﻿using TaskManager.Domain.Entities; 
+﻿using TaskManager.Domain.Entities;
+using TaskManager.Domain.Enums;
 
 namespace UserProTasks.Application.Interfaces
 {
     public interface ITarefaRepository
     {
         Task<Tarefa> GetByIdAsync(Guid id);
-        Task<Tarefa> GetByIdWithDetailsAsync(Guid id); // Novo: Incluir Comentarios e Historico
-        Task<IEnumerable<Tarefa>> GetByProjetoIdAsync(Guid projetoId); // Novo: Listar tarefas de um projeto
-        Task<IEnumerable<Tarefa>> GetConcluidasPorUsuarioDesdeAsync(Guid usuarioId, DateTime dataInicio); // Novo: Para relatórios
+        Task<Tarefa> GetByIdWithDetailsAsync(Guid id);
+        Task<IEnumerable<Tarefa>> GetByProjetoIdAsync(Guid projetoId);
+        Task<IEnumerable<Tarefa>> GetConcluidasPorUsuarioDesdeAsync(Guid usuarioId, DateTime dataInicio);
+        Task<IEnumerable<Tarefa>> GetTarefasPendentesByProjetoIdAsync(Guid projetoId); // <--- Adicione esta linha
         Task AddAsync(Tarefa tarefa);
         Task UpdateAsync(Tarefa tarefa);
         Task DeleteAsync(Tarefa tarefa);

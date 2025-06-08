@@ -1,5 +1,6 @@
 ﻿ 
-using Microsoft.AspNetCore.Mvc; 
+using Microsoft.AspNetCore.Mvc;
+using TaskManager.Domain.Enums;
 using UserProTasks.Application.DTOs;
 using UserProTasks.Application.UseCases.Tarefas; // Incluir novos use cases
 
@@ -43,11 +44,9 @@ namespace UserProTasks.Api.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            var usuarioCriacao = "UsuarioLogado"; // Simulação
-
+             
             var (tarefaCriada, errorMessage) = await _criarTarefaUseCase.ExecutarAsync(
-                dto.Titulo, dto.Descricao, dto.DataVencimento, dto.Prioridade, dto.ProjetoId, usuarioCriacao);
+                dto.Titulo, dto.Descricao, dto.DataVencimento,StatusTarefa.Pendente, dto.Prioridade, dto.ProjetoId);
 
             if (tarefaCriada == null)
             {

@@ -14,6 +14,7 @@ namespace UserProTasks.Application.DTOs
         public DateTime? DataVencimento { get; set; } // Nullable, para permitir atualização parcial
 
         public StatusTarefa? Status { get; set; } // Nullable, para permitir atualização parcial
-        // PRIORIDADE NÃO INCLUÍDA AQUI PELA REGRA DE NEGÓCIO
+                                                  // PRIORIDADE NÃO INCLUÍDA AQUI PELA REGRA DE NEGÓCIO
+        public PrioridadeTarefa Prioridade { get; set; }
     }
 }

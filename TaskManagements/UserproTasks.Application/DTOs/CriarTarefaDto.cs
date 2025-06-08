@@ -21,5 +21,6 @@ namespace UserProTasks.Application.DTOs
         [Required(ErrorMessage = "O ID do projeto é obrigatório.")]
         public Guid ProjetoId { get; set; }
         // UsuarioCriacao será inferido na camada de API ou Use Case
+
     }
 }

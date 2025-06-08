@@ -1,7 +1,7 @@
 ﻿ 
 using TaskManager.Domain.Enums;
 using UserProTasks.Application.DTOs;
-using UserProTasks.Application.Interfaces; 
+using UserProTasks.Application.Interfaces;
 
 namespace UserProTasks.Application.UseCases.Projetos
 {
@@ -28,8 +28,11 @@ namespace UserProTasks.Application.UseCases.Projetos
                 UsuarioId = p.UsuarioId,
                 NomeUsuario = p.NomeUsuario,
                 QuantidadeTarefasPendentes = p.Tarefas.Count(t => t.Status != StatusTarefa.Concluida),
-                QuantidadeTarefasConcluidas = p.Tarefas.Count(t => t.Status == StatusTarefa.Concluida)
+                QuantidadeTarefasConcluidas = p.Tarefas.Count(t => t.Status == StatusTarefa.Concluida),
+                FuncaoUsuario=p.FuncaoUsuario
             }).ToList();
         }
+
+
     }
 }

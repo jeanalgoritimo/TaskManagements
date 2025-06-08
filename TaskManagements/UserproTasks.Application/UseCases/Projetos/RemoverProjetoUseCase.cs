@@ -20,7 +20,7 @@ namespace UserProTasks.Application.UseCases.Projetos
                 return (false, "Projeto não encontrado.");
             }
 
-            if (!projeto.PodeSerRemovido()) // Aplica a regra de negócio
+            if (!projeto.HasTarefasPendentes()) // Aplica a regra de negócio
             {
                 return (false, "Não é possível remover o projeto, existem tarefas pendentes. Conclua ou remova-as primeiro.");
             }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TaskManager.Domain.Entities;
 using TaskManager.Domain.Enums;
-using UserProTasks.Application.Interfaces; 
+using UserProTasks.Application.Interfaces;
 using UserProTasks.Infrastructure.Data;
 
 namespace UserProTasks.Infrastructure.Repositories
@@ -47,6 +48,14 @@ namespace UserProTasks.Infrastructure.Repositories
                                  .Where(t => t.Status == StatusTarefa.Concluida &&
                                              t.Historico.Any(h => h.Descricao.Contains("Status alterado para 'Concluida'") && h.Data >= dataInicio) &&
                                              t.Projeto.UsuarioId == usuarioId) // Assume que Projeto.UsuarioId é o usuário "dono"
+                                 .ToListAsync();
+        }
+
+        // <--- Adicione este novo método
+        public async Task<IEnumerable<Tarefa>> GetTarefasPendentesByProjetoIdAsync(Guid projetoId)
+        {
+            return await _context.Tarefas
+                                 .Where(t => t.ProjetoId == projetoId && t.Status != StatusTarefa.Concluida) // Assumindo que "Pendente" significa não "Concluida"
                                  .ToListAsync();
         }
 

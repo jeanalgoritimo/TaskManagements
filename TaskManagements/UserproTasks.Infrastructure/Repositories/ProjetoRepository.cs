@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using UserProTasks.Application.Interfaces; 
+﻿// UserProTasks.Infrastructure.Repositories.ProjetoRepository.cs
+using Microsoft.EntityFrameworkCore;
+using TaskManager.Domain.Entities;
+using UserProTasks.Application.Interfaces;
 using UserProTasks.Infrastructure.Data;
+using UserproTasks.Application.DTOs; 
 
 namespace UserProTasks.Infrastructure.Repositories
 {
@@ -21,24 +24,26 @@ namespace UserProTasks.Infrastructure.Repositories
         public async Task<Projeto> GetByIdWithTasksAsync(Guid id)
         {
             return await _context.Projetos
-                                 .Include(p => p.Tarefas) // Incluir tarefas para a regra de negócio de remoção
+                                 .Include(p => p.Tarefas)
                                  .FirstOrDefaultAsync(p => p.ProjetoId == id);
         }
 
         public async Task<IEnumerable<Projeto>> GetAllByUserIdAsync(Guid userId)
         {
-            // Se userId for Guid.Empty, significa que queremos todos os projetos para o relatório (apenas exemplo)
-            // Em um sistema real, você teria um User/Role de autenticação/autorização
-            if (userId == Guid.Empty)
-            {
-                return await _context.Projetos
-                                     .Include(p => p.Tarefas) // Inclui tarefas para calcular pendentes/concluídas no DTO
-                                     .ToListAsync();
-            }
-
+            // Este método já retorna todos os projetos se userId for Guid.Empty.
+            // Para manter a responsabilidade única, vamos fazê-lo retornar APENAS os projetos do usuário
+            // e criar um GetAllAsync() separado para todos os projetos.
             return await _context.Projetos
                                  .Where(p => p.UsuarioId == userId)
-                                 .Include(p => p.Tarefas) // Inclui tarefas
+                                 .Include(p => p.Tarefas)
+                                 .ToListAsync();
+        }
+
+        // Implementação do GetAllAsync()
+        public async Task<IEnumerable<Projeto>> GetAllAsync()
+        {
+            return await _context.Projetos
+                                 .Include(p => p.Tarefas) // Inclua se necessário, dependendo do uso
                                  .ToListAsync();
         }
 
@@ -62,6 +67,18 @@ namespace UserProTasks.Infrastructure.Repositories
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<UsuarioDto>> GetUsuariosDosProjetosAsync()
+        {
+            return await _context.Projetos
+                                 .GroupBy(p => new { p.UsuarioId, p.NomeUsuario })
+                                 .Select(g => new UsuarioDto
+                                 {
+                                     UsuarioId = g.Key.UsuarioId,
+                                     NomeUsuario = g.Key.NomeUsuario
+                                 })
+                                 .ToListAsync();
         }
     }
 }

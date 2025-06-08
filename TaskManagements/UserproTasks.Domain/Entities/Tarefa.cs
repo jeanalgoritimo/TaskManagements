@@ -1,76 +1,99 @@
-﻿using TaskManager.Domain.Entities;
+﻿ 
 using TaskManager.Domain.Enums; 
 
-public class Tarefa
+namespace TaskManager.Domain.Entities // <-- Certifique-se de que o namespace está aqui
 {
-    public Guid Id { get; private set; }
-    public string Titulo { get; private set; }
-    public string Descricao { get; private set; }
-    public DateTime DataVencimento { get; private set; }
-    public StatusTarefa Status { get; private set; }
-    public PrioridadeTarefa Prioridade { get; private set; }
-    public Guid ProjetoId { get; private set; }
-    public List<Comentario> Comentarios { get; private set; } = new();
-    public List<HistoricoTarefa> Historico { get; private set; } = new();
-    public Projeto Projeto { get; private set; }
-
-    public Tarefa(string titulo, string descricao, DateTime dataVencimento, PrioridadeTarefa prioridade, Guid projetoId)
+    public class Tarefa
     {
-        Id = Guid.NewGuid();
-        Titulo = titulo;
-        Descricao = descricao;
-        DataVencimento = dataVencimento.ToUniversalTime(); // Garante UTC
-        Prioridade = prioridade;
-        Status = StatusTarefa.Pendente;
-        ProjetoId = projetoId;
-    }
+        public Guid Id { get; set; }
+        public string Titulo { get; set; }
+        public string Descricao { get; set; }
+        public DateTime DataVencimento { get; set; }
+        public StatusTarefa Status { get; set; }
+        public PrioridadeTarefa Prioridade { get; set; }
+        public Guid ProjetoId { get; set; }
+        public Guid UsuarioId { get; set; } // <--- Adicionado
+        public string NomeUsuario { get; set; } // <--- Adicionado
 
-    public void AtualizarStatus(StatusTarefa novoStatus, string usuario)
-    {
-        if (Status == novoStatus) return;
-        var anterior = Status;
-        Status = novoStatus;
-        AdicionarHistorico($"Status alterado de '{anterior}' para '{novoStatus}'.", usuario);
-    }
+        public List<Comentario> Comentarios { get; set; } = new();
+        public List<HistoricoTarefa> Historico { get; set; } = new();
+        public Projeto Projeto { get; set; } // Propriedade de navegação
 
-    public void AtualizarDetalhes(string novoTitulo, string novaDescricao, DateTime novaDataVencimento, string usuario)
-    {
-        bool changed = false;
-        if (Titulo != novoTitulo)
+        // Construtor atualizado para incluir usuarioId e nomeUsuario
+        public Tarefa(string titulo, string descricao, DateTime dataVencimento, StatusTarefa status, PrioridadeTarefa prioridade, Guid projetoId, Guid usuarioId, string nomeUsuario)
         {
-            Titulo = novoTitulo;
-            changed = true;
-        }
-        if (Descricao != novaDescricao)
-        {
-            Descricao = novaDescricao;
-            changed = true;
+            // Validações básicas no domínio (se não forem feitas no UseCase/Application Layer)
+            if (string.IsNullOrWhiteSpace(titulo))
+                throw new ArgumentException("O título da tarefa não pode ser nulo ou vazio.", nameof(titulo));
+            if (string.IsNullOrWhiteSpace(nomeUsuario))
+                throw new ArgumentException("O nome do usuário criador não pode ser nulo ou vazio.", nameof(nomeUsuario));
+
+
+            Id = Guid.NewGuid();
+            Titulo = titulo;
+            Descricao = descricao;
+            DataVencimento = dataVencimento.ToUniversalTime();
+            Prioridade = prioridade;
+            Status = status; // Tarefa sempre começa como Pendente
+            ProjetoId = projetoId;
+            UsuarioId = usuarioId; // <--- Atribuído
+            NomeUsuario = nomeUsuario; // <--- Atribuído
         }
 
-        var novaDataVencimentoUtc = novaDataVencimento.Kind == DateTimeKind.Unspecified
-                                    ? DateTime.SpecifyKind(novaDataVencimento, DateTimeKind.Utc)
-                                    : novaDataVencimento.ToUniversalTime();
+        // Construtor sem parâmetros para EF Core
+        protected Tarefa() { }
 
-        if (DataVencimento != novaDataVencimentoUtc)
+        // Métodos de negócio (já existentes)
+        public void AtualizarStatus(StatusTarefa novoStatus, string usuario)
         {
-            DataVencimento = novaDataVencimentoUtc;
-            changed = true;
+            if (Status == novoStatus) return;
+            var anterior = Status;
+            Status = novoStatus;
+            AdicionarHistorico($"Status alterado de '{anterior}' para '{novoStatus}'.", usuario);
         }
 
-        if (changed)
+        public void AtualizarDetalhes(string novoTitulo, string novaDescricao, DateTime novaDataVencimento, string usuario)
         {
-            AdicionarHistorico($"Detalhes da tarefa atualizados.", usuario);
+            bool changed = false;
+            if (Titulo != novoTitulo)
+            {
+                Titulo = novoTitulo;
+                changed = true;
+            }
+            if (Descricao != novaDescricao)
+            {
+                Descricao = novaDescricao;
+                changed = true;
+            }
+
+            var novaDataVencimentoUtc = novaDataVencimento.Kind == DateTimeKind.Unspecified
+                                            ? DateTime.SpecifyKind(novaDataVencimento, DateTimeKind.Utc)
+                                            : novaDataVencimento.ToUniversalTime();
+
+            if (DataVencimento != novaDataVencimentoUtc)
+            {
+                DataVencimento = novaDataVencimentoUtc;
+                changed = true;
+            }
+
+            if (changed)
+            {
+                AdicionarHistorico($"Detalhes da tarefa atualizados.", usuario);
+            }
         }
-    }
 
-    public void AdicionarComentario(string texto, string usuario)
-    {
-        Comentarios.Add(new Comentario(texto, usuario, Id));
-        AdicionarHistorico($"Comentário adicionado: '{texto}'.", usuario);
-    }
+        public void AdicionarComentario(string texto, string usuario)
+        {
+            if (string.IsNullOrWhiteSpace(texto))
+                throw new ArgumentException("O texto do comentário não pode ser nulo ou vazio.", nameof(texto));
 
-    private void AdicionarHistorico(string descricao, string usuario)
-    {
-        Historico.Add(new HistoricoTarefa(descricao, usuario, Id));
+            Comentarios.Add(new Comentario(texto, usuario, Id));
+            AdicionarHistorico($"Comentário adicionado: '{texto}'.", usuario);
+        }
+
+        private void AdicionarHistorico(string descricao, string usuario)
+        {
+            Historico.Add(new HistoricoTarefa(descricao, usuario, Id));
+        }
     }
 }

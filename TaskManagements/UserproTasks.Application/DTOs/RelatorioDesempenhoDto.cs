@@ -5,6 +5,7 @@
         public List<DesempenhoUsuarioDto> DesempenhoPorUsuario { get; set; } = new();
         public DateTime DataGeracao { get; set; } = DateTime.UtcNow;
         public string PeriodoRelatorio { get; set; } // Ex: "Últimos 30 dias"
+        public double NumeroMedioTarefasConcluidasGeral { get; set; }
     }
 
     public class DesempenhoUsuarioDto

@@ -33,6 +33,7 @@ builder.Services.AddScoped<AtualizarTarefaUseCase>();      // Novo
 builder.Services.AddScoped<RemoverTarefaUseCase>();        // Novo
 builder.Services.AddScoped<AdicionarComentarioTarefaUseCase>(); // Novo
 builder.Services.AddScoped<GerarRelatorioDesempenhoUseCase>(); // Novo
+builder.Services.AddScoped<ListarUsuariosDosProjetosUseCase>();
 
 var app = builder.Build();
 

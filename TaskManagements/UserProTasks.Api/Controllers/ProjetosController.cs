@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc; 
+﻿
+using Microsoft.AspNetCore.Mvc; 
 using UserProTasks.Application.DTOs;
 using UserProTasks.Application.UseCases.Projetos; // Incluir os novos use cases
 
@@ -11,16 +12,18 @@ namespace UserProTasks.Api.Controllers
     {
         private readonly CriarProjetoUseCase _criarProjetoUseCase;
         private readonly ListarProjetosUsuarioUseCase _listarProjetosUsuarioUseCase;
-        private readonly RemoverProjetoUseCase _removerProjetoUseCase;
-
+        private readonly RemoverProjetoUseCase _removerProjetoUseCase; 
+        private readonly ListarUsuariosDosProjetosUseCase _listarUsuariosDosProjetosUseCase;
         public ProjetosController(
             CriarProjetoUseCase criarProjetoUseCase,
             ListarProjetosUsuarioUseCase listarProjetosUsuarioUseCase,
-            RemoverProjetoUseCase removerProjetoUseCase)
+            RemoverProjetoUseCase removerProjetoUseCase,
+            ListarUsuariosDosProjetosUseCase listarUsuariosDosProjetosUseCase)
         {
             _criarProjetoUseCase = criarProjetoUseCase;
             _listarProjetosUsuarioUseCase = listarProjetosUsuarioUseCase;
             _removerProjetoUseCase = removerProjetoUseCase;
+            _listarUsuariosDosProjetosUseCase = listarUsuariosDosProjetosUseCase;
         }
 
         /// <summary>
@@ -36,9 +39,8 @@ namespace UserProTasks.Api.Controllers
 
             // Simulação de usuário logado. Em um cenário real, obteria do token JWT.
             var usuarioId = Guid.NewGuid(); // EX: Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? Guid.Empty.ToString());
-            var nomeUsuario = "UsuarioLogado"; // EX: User.FindFirst(ClaimTypes.Name)?.Value ?? "Desconhecido";
 
-            var projeto = await _criarProjetoUseCase.ExecutarAsync(dto.Nome, dto.Descricao, usuarioId, nomeUsuario);
+            var projeto = await _criarProjetoUseCase.ExecutarAsync(dto.Nome, dto.Descricao, usuarioId, dto.nomeUsuario, dto.funcaoUsuario);
             return CreatedAtAction(nameof(CriarProjeto), new { id = projeto.ProjetoId }, projeto);
         }
 
@@ -46,10 +48,10 @@ namespace UserProTasks.Api.Controllers
         /// Lista todos os projetos do usuário logado.
         /// </summary>
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProjetoDto>>> ListarProjetos()
+        public async Task<ActionResult<IEnumerable<ProjetoDto>>> ListarProjetos(Guid usuarioId)
         {
             // Simulação de usuário logado.
-            var usuarioId = Guid.NewGuid(); // EX: Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? Guid.Empty.ToString());
+            //var usuarioId = Guid.NewGuid(); // EX: Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? Guid.Empty.ToString());
 
             var projetos = await _listarProjetosUsuarioUseCase.ExecutarAsync(usuarioId);
             return Ok(projetos);
@@ -73,6 +75,13 @@ namespace UserProTasks.Api.Controllers
             }
 
             return NoContent(); // 204 No Content
+        }
+
+        [HttpGet("usuarios")]
+        public async Task<IActionResult> GetUsuariosDosProjetos()
+        {
+            var usuarios = await _listarUsuariosDosProjetosUseCase.ExecutarAsync();
+            return Ok(usuarios);
         }
     }
 }

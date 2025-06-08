@@ -1,5 +1,6 @@
 ﻿using UserProTasks.Application.Interfaces;
 using TaskManager.Domain.Enums;
+using TaskManager.Domain.Entities;
 
 namespace UserProTasks.Application.UseCases.Tarefas
 {
@@ -18,9 +19,9 @@ namespace UserProTasks.Application.UseCases.Tarefas
             string titulo,
             string descricao,
             DateTime dataVencimento,
+            StatusTarefa statusTarefa,
             PrioridadeTarefa prioridade,
-            Guid projetoId,
-            string usuarioCriacao)
+            Guid projetoId)
         {
             var projeto = await _projetoRepository.GetByIdWithTasksAsync(projetoId); // Carregar tarefas para verificar limite
             if (projeto == null)
@@ -33,7 +34,7 @@ namespace UserProTasks.Application.UseCases.Tarefas
                 return (null, $"Limite máximo de {Projeto.LimiteMaximoTarefas} tarefas por projeto atingido.");
             }
 
-            var novaTarefa = new Tarefa(titulo, descricao, dataVencimento, prioridade, projetoId);
+            var novaTarefa = new Tarefa(titulo, descricao, dataVencimento, statusTarefa, prioridade, projetoId, projeto.UsuarioId, projeto.NomeUsuario);
             await _tarefaRepository.AddAsync(novaTarefa);
             await _tarefaRepository.SaveChangesAsync();
 
