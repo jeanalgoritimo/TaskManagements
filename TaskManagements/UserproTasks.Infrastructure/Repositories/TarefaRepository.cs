@@ -36,26 +36,19 @@ namespace UserProTasks.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<Tarefa>> GetConcluidasPorUsuarioDesdeAsync(Guid usuarioId, DateTime dataInicio)
-        {
-            // Esta consulta é um pouco complexa, pois UsuarioCriacao não está na Tarefa.
-            // Assumindo que o "Usuario" no histórico da tarefa é o criador/responsável,
-            // ou que Projeto.UsuarioId é o usuário do projeto.
-            // Para simplificar, vou filtrar por tarefas que foram concluídas após dataInicio
-            // e cujo projeto pertence ao usuarioId.
-            // EM UM SISTEMA REAL, você teria um campo "UsuarioAtribuidoId" na Tarefa.
-
+        { 
             return await _context.Tarefas
                                  .Where(t => t.Status == StatusTarefa.Concluida &&
                                              t.Historico.Any(h => h.Descricao.Contains("Status alterado para 'Concluida'") && h.Data >= dataInicio) &&
-                                             t.Projeto.UsuarioId == usuarioId) // Assume que Projeto.UsuarioId é o usuário "dono"
+                                             t.Projeto.UsuarioId == usuarioId)  
                                  .ToListAsync();
         }
 
-        // <--- Adicione este novo método
+     
         public async Task<IEnumerable<Tarefa>> GetTarefasPendentesByProjetoIdAsync(Guid projetoId)
         {
             return await _context.Tarefas
-                                 .Where(t => t.ProjetoId == projetoId && t.Status != StatusTarefa.Concluida) // Assumindo que "Pendente" significa não "Concluida"
+                                 .Where(t => t.ProjetoId == projetoId && t.Status != StatusTarefa.Concluida)  
                                  .ToListAsync();
         }
 

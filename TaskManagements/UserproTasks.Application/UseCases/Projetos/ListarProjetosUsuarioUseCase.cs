@@ -18,7 +18,6 @@ namespace UserProTasks.Application.UseCases.Projetos
         {
             var projetos = await _projetoRepository.GetAllByUserIdAsync(usuarioId);
 
-            // Mapear para DTOs e calcular tarefas pendentes/concluídas
             return projetos.Select(p => new ProjetoDto
             {
                 ProjetoId = p.ProjetoId,

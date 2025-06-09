@@ -11,10 +11,10 @@ namespace UserProTasks.Application.DTOs
         [MaxLength(1000, ErrorMessage = "A descrição da tarefa não pode exceder 1000 caracteres.")]
         public string Descricao { get; set; }
 
-        public DateTime? DataVencimento { get; set; } // Nullable, para permitir atualização parcial
+        public DateTime? DataVencimento { get; set; } 
 
-        public StatusTarefa? Status { get; set; } // Nullable, para permitir atualização parcial
-                                                  // PRIORIDADE NÃO INCLUÍDA AQUI PELA REGRA DE NEGÓCIO
+        public StatusTarefa? Status { get; set; } 
+                                                
         public PrioridadeTarefa Prioridade { get; set; }
     }
 }

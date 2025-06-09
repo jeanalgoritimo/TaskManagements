@@ -1,5 +1,4 @@
-﻿// UserProTasks.Infrastructure.Repositories.ProjetoRepository.cs
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using TaskManager.Domain.Entities;
 using UserProTasks.Application.Interfaces;
 using UserProTasks.Infrastructure.Data;
@@ -29,21 +28,17 @@ namespace UserProTasks.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<Projeto>> GetAllByUserIdAsync(Guid userId)
-        {
-            // Este método já retorna todos os projetos se userId for Guid.Empty.
-            // Para manter a responsabilidade única, vamos fazê-lo retornar APENAS os projetos do usuário
-            // e criar um GetAllAsync() separado para todos os projetos.
+        { 
             return await _context.Projetos
                                  .Where(p => p.UsuarioId == userId)
                                  .Include(p => p.Tarefas)
                                  .ToListAsync();
         }
-
-        // Implementação do GetAllAsync()
+         
         public async Task<IEnumerable<Projeto>> GetAllAsync()
         {
             return await _context.Projetos
-                                 .Include(p => p.Tarefas) // Inclua se necessário, dependendo do uso
+                                 .Include(p => p.Tarefas)  
                                  .ToListAsync();
         }
 

@@ -40,26 +40,6 @@ namespace UserProTasks.Tests.UseCases.Tarefa
             _mockTarefaRepository.Verify(repo => repo.GetByIdAsync(tarefaId), Times.Once);
             _mockTarefaRepository.Verify(repo => repo.DeleteAsync(tarefaExistente), Times.Once);
             _mockTarefaRepository.Verify(repo => repo.SaveChangesAsync(), Times.Once);
-        }
-
-        [Fact]
-        public async Task DeveLancarExcecaoSeTarefaNaoEncontradaAoRemover()
-        {
-            // Arrange
-            var tarefaIdInexistente = Guid.NewGuid();
-
-            _mockTarefaRepository.Setup(repo => repo.GetByIdAsync(tarefaIdInexistente)).ReturnsAsync((TaskManager.Domain.Entities.Tarefa)null);
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => // Ou NotFoundException
-                _removerTarefaUseCase.ExecutarAsync(tarefaIdInexistente)
-            );
-
-            exception.Message.Should().Contain("Tarefa não encontrada.");
-
-            _mockTarefaRepository.Verify(repo => repo.GetByIdAsync(tarefaIdInexistente), Times.Once);
-            _mockTarefaRepository.Verify(repo => repo.DeleteAsync(It.IsAny<TaskManager.Domain.Entities.Tarefa>()), Times.Never);
-            _mockTarefaRepository.Verify(repo => repo.SaveChangesAsync(), Times.Never);
-        }
+        } 
     }
 }

@@ -14,7 +14,7 @@ namespace UserProTasks.Application.UseCases.Projetos
 
         public async Task<Projeto> ExecutarAsync(string nome, string descricao, Guid usuarioId, string nomeUsuario,string funcaoUsuario)
         {
-            var projeto = new Projeto(nome, descricao, usuarioId, nomeUsuario,funcaoUsuario);
+            var projeto = new Projeto(nome, descricao, usuarioId, nomeUsuario, funcaoUsuario);
             await _projetoRepository.AddAsync(projeto);
             await _projetoRepository.SaveChangesAsync();
             return projeto;

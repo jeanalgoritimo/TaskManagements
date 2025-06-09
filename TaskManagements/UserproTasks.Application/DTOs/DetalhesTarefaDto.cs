@@ -11,7 +11,7 @@ namespace UserProTasks.Application.DTOs
         public StatusTarefa Status { get; set; }
         public PrioridadeTarefa Prioridade { get; set; }
         public Guid ProjetoId { get; set; }
-        public string UsuarioCriacao { get; set; } // Quem criou a tarefa
+        public string UsuarioCriacao { get; set; } 
         public List<ComentarioDto> Comentarios { get; set; } = new();
         public List<HistoricoDto> Historico { get; set; } = new();
     }

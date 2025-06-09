@@ -15,7 +15,7 @@ namespace UserProTasks.Application.UseCases.Tarefas
         public async Task<(bool Success, string ErrorMessage)> ExecutarAsync(
             Guid tarefaId,
             AtualizarTarefaDto dto,
-            string usuarioAtualizacao) // Quem está realizando a atualização
+            string usuarioAtualizacao) 
         {
             var tarefa = await _tarefaRepository.GetByIdAsync(tarefaId);
             if (tarefa == null)
@@ -23,12 +23,10 @@ namespace UserProTasks.Application.UseCases.Tarefas
                 return (false, "Tarefa não encontrada.");
             }
 
-            // Aplica atualizações e registra histórico
-            // Note que Prioridade NÃO é atualizada aqui devido à regra de negócio
             tarefa.AtualizarDetalhes(
-                dto.Titulo ?? tarefa.Titulo, // Usa o novo título se fornecido, senão mantém o existente
-                dto.Descricao ?? tarefa.Descricao, // Usa a nova descrição se fornecida, senão mantém
-                dto.DataVencimento ?? tarefa.DataVencimento, // Usa a nova data se fornecida, senão mantém
+                dto.Titulo ?? tarefa.Titulo, 
+                dto.Descricao ?? tarefa.Descricao, 
+                dto.DataVencimento ?? tarefa.DataVencimento, 
                 usuarioAtualizacao);
 
             if (dto.Status.HasValue && dto.Status.Value != tarefa.Status)

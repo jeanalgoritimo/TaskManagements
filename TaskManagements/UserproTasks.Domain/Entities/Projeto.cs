@@ -1,47 +1,52 @@
-﻿// TaskManager.Domain.Entities/Projeto.cs
-using System;
-using System.Collections.Generic;
-using TaskManager.Domain.Enums; // Para StatusTarefa, se a entidade Projeto precisar dela diretamente para a lógica de negócio
+﻿using TaskManager.Domain.Enums;
 
 namespace TaskManager.Domain.Entities
 {
     public class Projeto
     {
-        public Guid ProjetoId { get;  set; } // Ajustado para ProjetoId
+        public Guid ProjetoId { get;  set; }
         public string Nome { get;  set; }
         public string Descricao { get;  set; }
         public DateTime DataCriacao { get;  set; }
         public Guid UsuarioId { get;  set; }
         public string NomeUsuario { get;  set; }
-        public string FuncaoUsuario { get; set; }
+        public string FuncaoUsuario { get;  set; }
 
-        public const int LimiteMaximoTarefas = 20; // Nova constante para a regra de negócio
+        public const int LimiteMaximoTarefas = 20;
 
-        // Propriedade de navegação para Tarefas
         public ICollection<Tarefa> Tarefas { get;  set; } = new List<Tarefa>();
 
-        // Construtor principal
+        // Construtor principal com validações
         public Projeto(string nome, string descricao, Guid usuarioId, string nomeUsuario, string funcaoUsuario)
         {
-            // Validações básicas no construtor da entidade
-            if (string.IsNullOrWhiteSpace(nome))
-                throw new ArgumentException("O nome do projeto não pode ser nulo ou vazio.", nameof(nome));
             if (string.IsNullOrWhiteSpace(nomeUsuario))
-                throw new ArgumentException("O nome do usuário criador do projeto não pode ser nulo ou vazio.", nameof(nomeUsuario));
+                throw new ArgumentException("O nome do usuário é obrigatório.");
+
+            if (string.IsNullOrWhiteSpace(nome))
+                throw new ArgumentException("O nome do projeto não pode ser nulo ou vazio.");
+
+            if (string.IsNullOrWhiteSpace(descricao))
+                throw new ArgumentException("A descrição do projeto não pode ser nula ou vazia.");
+
+            if (string.IsNullOrWhiteSpace(funcaoUsuario))
+                throw new ArgumentException("A função do usuário é obrigatória.");
+
+            if (usuarioId == Guid.Empty)
+                throw new ArgumentException("O ID do usuário é inválido.");
 
             ProjetoId = Guid.NewGuid();
             Nome = nome;
             Descricao = descricao;
-            DataCriacao = DateTime.UtcNow; // Sempre armazenar em UTC
             UsuarioId = usuarioId;
             NomeUsuario = nomeUsuario;
             FuncaoUsuario = funcaoUsuario;
+            DataCriacao = DateTime.UtcNow;
         }
 
-        // Construtor sem parâmetros para Entity Framework Core
+        // Construtor protegido para EF
         protected Projeto() { }
 
-        // Método para atualizar informações do projeto (exemplo, se houver)
+        // Método de atualização
         public void AtualizarInformacoes(string novoNome, string novaDescricao)
         {
             if (string.IsNullOrWhiteSpace(novoNome))
@@ -49,15 +54,12 @@ namespace TaskManager.Domain.Entities
 
             Nome = novoNome;
             Descricao = novaDescricao;
-            // Poderia adicionar lógica de histórico aqui também, se aplicável
         }
 
-        // Método para verificar se há tarefas pendentes (útil para o RemoverProjetoUseCase)
-        public bool HasTarefasPendentes()
+        // Verifica se ainda existem tarefas pendentes
+        public virtual bool HasTarefasPendentes() // Adicione "virtual" aqui!
         {
-            // Certifique-se de que a coleção Tarefas foi carregada (via Include no repositório)
             return Tarefas != null && Tarefas.Any(t => t.Status != StatusTarefa.Concluida);
         }
-         
     }
 }

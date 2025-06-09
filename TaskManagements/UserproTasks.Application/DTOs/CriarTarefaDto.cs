@@ -16,11 +16,10 @@ namespace UserProTasks.Application.DTOs
         public DateTime DataVencimento { get; set; }
 
         [Required(ErrorMessage = "A prioridade da tarefa é obrigatória.")]
-        public PrioridadeTarefa Prioridade { get; set; } // Prioridade só na criação
+        public PrioridadeTarefa Prioridade { get; set; } 
 
         [Required(ErrorMessage = "O ID do projeto é obrigatório.")]
         public Guid ProjetoId { get; set; }
-        // UsuarioCriacao será inferido na camada de API ou Use Case
 
     }
 }

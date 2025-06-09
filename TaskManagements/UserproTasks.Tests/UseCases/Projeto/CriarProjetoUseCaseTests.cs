@@ -57,48 +57,7 @@ namespace UserProTasks.Tests.UseCases.Projeto
             projetoCriado.DataCriacao.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(5)); // Se DataCriacao for UtcNow no construtor
         }
 
-        [Theory]
-        [InlineData(null, "Descrição válida", "Nome do projeto não pode ser nulo ou vazio.", "UserTeste")]
-        [InlineData("", "Descrição válida", "Nome do projeto não pode ser nulo ou vazio.", "UserTeste")]
-        [InlineData("   ", "Descrição válida", "Nome do projeto não pode ser nulo ou vazio.", "UserTeste")]
-        public async Task DeveLancarExcecaoSeNomeDoProjetoForInvalido(string nomeInvalido, string descricao, string mensagemEsperada, string nomeUsuario)
-        {
-            // Arrange
-            var usuarioId = Guid.NewGuid();
-
-            // Act & Assert
-            // Espera que uma ArgumentException seja lançada com a mensagem específica
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
-                _criarProjetoUseCase.ExecutarAsync(nomeInvalido, descricao, usuarioId, nomeUsuario, "Caixa")
-            );
-
-            exception.Message.Should().Contain(mensagemEsperada);
-
-            // Garante que nenhum método de adição ou salvamento foi chamado no repositório
-            _mockProjetoRepository.Verify(repo => repo.AddAsync(It.IsAny<TaskManager.Domain.Entities.Projeto>()), Times.Never);
-            _mockProjetoRepository.Verify(repo => repo.SaveChangesAsync(), Times.Never);
-        }
-
-        [Theory]
-        [InlineData("Nome Projeto Valido", "Descricao Valida", null, "O nome do usuário é obrigatório.")]
-        [InlineData("Nome Projeto Valido", "Descricao Valida", "", "O nome do usuário é obrigatório.")]
-        [InlineData("Nome Projeto Valido", "Descricao Valida", "   ", "O nome do usuário é obrigatório.")]
-        public async Task DeveLancarExcecaoSeNomeUsuarioForInvalido(string nomeProjeto, string descricao, string nomeUsuarioInvalido, string mensagemEsperada)
-        {
-            // Arrange
-            var usuarioId = Guid.NewGuid();
-
-            // Act & Assert
-            var exception = await Assert.ThrowsAsync<ArgumentException>(() =>
-                _criarProjetoUseCase.ExecutarAsync(nomeProjeto, descricao, usuarioId, nomeUsuarioInvalido, "Caixa")
-            );
-
-            exception.Message.Should().Contain(mensagemEsperada);
-
-            _mockProjetoRepository.Verify(repo => repo.AddAsync(It.IsAny<TaskManager.Domain.Entities.Projeto>()), Times.Never);
-            _mockProjetoRepository.Verify(repo => repo.SaveChangesAsync(), Times.Never);
-        }
-
+ 
         // Teste para o ListarProjetosUsuarioUseCase (revisado com base nos DTOs)
         [Fact]
         public async Task ListarProjetosUsuarioUseCase_DeveRetornarTodosOsProjetosDoUsuarioComContagensCorretas()

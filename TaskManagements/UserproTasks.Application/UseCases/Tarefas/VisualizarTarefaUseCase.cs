@@ -14,7 +14,7 @@ namespace UserProTasks.Application.UseCases.Tarefas
 
         public async Task<DetalhesTarefaDto> ExecutarAsync(Guid tarefaId)
         {
-            var tarefa = await _tarefaRepository.GetByIdWithDetailsAsync(tarefaId); // Carregar detalhes
+            var tarefa = await _tarefaRepository.GetByIdWithDetailsAsync(tarefaId); 
             if (tarefa == null)
             {
                 return null;
@@ -29,7 +29,6 @@ namespace UserProTasks.Application.UseCases.Tarefas
                 Status = tarefa.Status,
                 Prioridade = tarefa.Prioridade,
                 ProjetoId = tarefa.ProjetoId,
-                // UsuarioCriacao: Precisa ser passado ou inferido de alguma forma
                 Comentarios = tarefa.Comentarios.Select(c => new ComentarioDto
                 {
                     Id = c.Id,

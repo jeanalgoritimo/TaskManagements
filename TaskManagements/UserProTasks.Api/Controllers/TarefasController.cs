@@ -8,7 +8,6 @@ namespace UserProTasks.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    // [Authorize] // Se você implementar autenticação
     public class TarefasController : ControllerBase
     {
         private readonly CriarTarefaUseCase _criarTarefaUseCase;

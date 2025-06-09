@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc; 
 using UserProTasks.Application.DTOs;
 using UserProTasks.Application.UseCases.Relatorios;
-// using Microsoft.AspNetCore.Authorization; // Descomente quando implementar autenticação
 
 namespace UserProTasks.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    // [Authorize(Roles = "Gerente")] // Protege o endpoint. Requer configuração de autenticação/autorização
     public class RelatoriosController : ControllerBase
     {
         private readonly GerarRelatorioDesempenhoUseCase _gerarRelatorioDesempenhoUseCase;
@@ -25,9 +23,7 @@ namespace UserProTasks.Api.Controllers
         [HttpGet("desempenho")]
         public async Task<ActionResult<RelatorioDesempenhoDto>> GerarRelatorioDesempenho([FromQuery] int diasRetroativos = 30, string usuarioGerador ="")
         {
-            // Em um sistema real, o 'usuarioGerador' viria do token JWT do usuário logado.
-    
-
+            // Relatório de desempenho. 
             var relatorio = await _gerarRelatorioDesempenhoUseCase.ExecutarAsync(diasRetroativos, usuarioGerador);
             return Ok(relatorio);
         }

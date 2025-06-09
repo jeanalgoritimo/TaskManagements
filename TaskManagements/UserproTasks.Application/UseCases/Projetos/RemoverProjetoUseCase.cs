@@ -13,14 +13,14 @@ namespace UserProTasks.Application.UseCases.Projetos
 
         public async Task<(bool Success, string ErrorMessage)> ExecutarAsync(Guid projetoId)
         {
-            var projeto = await _projetoRepository.GetByIdWithTasksAsync(projetoId); // Carregar tarefas para a regra de negócio
+            var projeto = await _projetoRepository.GetByIdWithTasksAsync(projetoId); 
 
             if (projeto == null)
             {
                 return (false, "Projeto não encontrado.");
             }
 
-            if (!projeto.HasTarefasPendentes()) // Aplica a regra de negócio
+            if (!projeto.HasTarefasPendentes())
             {
                 return (false, "Não é possível remover o projeto, existem tarefas pendentes. Conclua ou remova-as primeiro.");
             }

@@ -23,13 +23,13 @@ namespace UserProTasks.Application.UseCases.Tarefas
             PrioridadeTarefa prioridade,
             Guid projetoId)
         {
-            var projeto = await _projetoRepository.GetByIdWithTasksAsync(projetoId); // Carregar tarefas para verificar limite
+            var projeto = await _projetoRepository.GetByIdWithTasksAsync(projetoId); 
             if (projeto == null)
             {
                 return (null, "Projeto não encontrado.");
             }
 
-            if (projeto.Tarefas.Count >= Projeto.LimiteMaximoTarefas) // Aplica a regra de negócio
+            if (projeto.Tarefas.Count >= Projeto.LimiteMaximoTarefas) 
             {
                 return (null, $"Limite máximo de {Projeto.LimiteMaximoTarefas} tarefas por projeto atingido.");
             }

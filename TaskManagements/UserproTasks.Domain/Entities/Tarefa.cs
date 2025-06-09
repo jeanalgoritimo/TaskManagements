@@ -1,7 +1,6 @@
-﻿ 
-using TaskManager.Domain.Enums; 
+﻿using TaskManager.Domain.Enums; 
 
-namespace TaskManager.Domain.Entities // <-- Certifique-se de que o namespace está aqui
+namespace TaskManager.Domain.Entities 
 {
     public class Tarefa
     {
@@ -12,17 +11,15 @@ namespace TaskManager.Domain.Entities // <-- Certifique-se de que o namespace es
         public StatusTarefa Status { get; set; }
         public PrioridadeTarefa Prioridade { get; set; }
         public Guid ProjetoId { get; set; }
-        public Guid UsuarioId { get; set; } // <--- Adicionado
-        public string NomeUsuario { get; set; } // <--- Adicionado
-
+        public Guid UsuarioId { get; set; } 
+        public string NomeUsuario { get; set; } 
         public List<Comentario> Comentarios { get; set; } = new();
         public List<HistoricoTarefa> Historico { get; set; } = new();
-        public Projeto Projeto { get; set; } // Propriedade de navegação
+        public Projeto Projeto { get; set; } 
 
-        // Construtor atualizado para incluir usuarioId e nomeUsuario
         public Tarefa(string titulo, string descricao, DateTime dataVencimento, StatusTarefa status, PrioridadeTarefa prioridade, Guid projetoId, Guid usuarioId, string nomeUsuario)
         {
-            // Validações básicas no domínio (se não forem feitas no UseCase/Application Layer)
+           
             if (string.IsNullOrWhiteSpace(titulo))
                 throw new ArgumentException("O título da tarefa não pode ser nulo ou vazio.", nameof(titulo));
             if (string.IsNullOrWhiteSpace(nomeUsuario))
@@ -34,16 +31,15 @@ namespace TaskManager.Domain.Entities // <-- Certifique-se de que o namespace es
             Descricao = descricao;
             DataVencimento = dataVencimento.ToUniversalTime();
             Prioridade = prioridade;
-            Status = status; // Tarefa sempre começa como Pendente
+            Status = status; 
             ProjetoId = projetoId;
-            UsuarioId = usuarioId; // <--- Atribuído
-            NomeUsuario = nomeUsuario; // <--- Atribuído
+            UsuarioId = usuarioId; 
+            NomeUsuario = nomeUsuario;
         }
 
-        // Construtor sem parâmetros para EF Core
+      
         protected Tarefa() { }
 
-        // Métodos de negócio (já existentes)
         public void AtualizarStatus(StatusTarefa novoStatus, string usuario)
         {
             if (Status == novoStatus) return;

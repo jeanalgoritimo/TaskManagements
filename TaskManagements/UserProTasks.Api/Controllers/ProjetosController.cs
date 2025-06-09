@@ -37,22 +37,20 @@ namespace UserProTasks.Api.Controllers
                 return BadRequest(ModelState);
             }
 
-            // Simulação de usuário logado. Em um cenário real, obteria do token JWT.
-            var usuarioId = Guid.NewGuid(); // EX: Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? Guid.Empty.ToString());
+            // geração de quid do usuário.
+            var usuarioId = Guid.NewGuid(); 
 
             var projeto = await _criarProjetoUseCase.ExecutarAsync(dto.Nome, dto.Descricao, usuarioId, dto.nomeUsuario, dto.funcaoUsuario);
             return CreatedAtAction(nameof(CriarProjeto), new { id = projeto.ProjetoId }, projeto);
         }
 
         /// <summary>
-        /// Lista todos os projetos do usuário logado.
+        /// Lista todos os projetos do usuário.
         /// </summary>
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProjetoDto>>> ListarProjetos(Guid usuarioId)
         {
-            // Simulação de usuário logado.
-            //var usuarioId = Guid.NewGuid(); // EX: Guid.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? Guid.Empty.ToString());
-
+             
             var projetos = await _listarProjetosUsuarioUseCase.ExecutarAsync(usuarioId);
             return Ok(projetos);
         }

@@ -15,6 +15,6 @@ namespace UserProTasks.Application.DTOs
         public StatusTarefa Status { get; set; }
         public PrioridadeTarefa Prioridade { get; set; }
         public Guid ProjetoId { get; set; }
-        public string UsuarioAtribuido { get; set; } // Se você tiver atribuição de usuário na tarefa
+        public string UsuarioAtribuido { get; set; } 
     }
 }

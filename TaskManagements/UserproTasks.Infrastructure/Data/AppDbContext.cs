@@ -18,15 +18,15 @@ namespace UserProTasks.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Mapeamento para Projeto
+             
             modelBuilder.Entity<Projeto>(entity =>
             {
                 entity.HasKey(e => e.ProjetoId);
                 entity.Property(e => e.ProjetoId).ValueGeneratedOnAdd();
                 entity.Property(e => e.DataCriacao).HasColumnType("timestamp with time zone");
 
-                // Adicione esta linha para configurar a propriedade FuncaoUsuario
-                entity.Property(e => e.FuncaoUsuario).HasMaxLength(50); // Defina um comprimento razoável para a função
+                
+                entity.Property(e => e.FuncaoUsuario).HasMaxLength(50); 
 
                 entity.HasMany(p => p.Tarefas)
                       .WithOne(t => t.Projeto)
@@ -34,7 +34,7 @@ namespace UserProTasks.Infrastructure.Data
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // Mapeamento para Tarefa
+           
             modelBuilder.Entity<Tarefa>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -42,25 +42,22 @@ namespace UserProTasks.Infrastructure.Data
                 entity.Property(e => e.DataVencimento).HasColumnType("timestamp with time zone");
 
                 entity.Property(t => t.Status)
-                      .HasConversion<string>(); // Armazenar como string
+                      .HasConversion<string>(); 
 
                 entity.Property(t => t.Prioridade)
-                      .HasConversion<string>(); // Armazenar como string
+                      .HasConversion<string>(); 
 
-                // Relacionamento Um-Para-Muitos com Comentarios
                 entity.HasMany(t => t.Comentarios)
                       .WithOne(c => c.Tarefa)
                       .HasForeignKey(c => c.TarefaId)
                       .OnDelete(DeleteBehavior.Cascade);
 
-                // Relacionamento Um-Para-Muitos com HistoricoTarefa
                 entity.HasMany(t => t.Historico)
                       .WithOne(h => h.Tarefa)
                       .HasForeignKey(h => h.TarefaId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // Mapeamento para Comentario
             modelBuilder.Entity<Comentario>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -68,7 +65,6 @@ namespace UserProTasks.Infrastructure.Data
                 entity.Property(e => e.DataCriacao).HasColumnType("timestamp with time zone");
             });
 
-            // Mapeamento para HistoricoTarefa
             modelBuilder.Entity<HistoricoTarefa>(entity =>
             {
                 entity.HasKey(e => e.Id);

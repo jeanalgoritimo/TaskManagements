@@ -4,7 +4,7 @@ using UserProTasks.Application.Interfaces;
 using UserProTasks.Infrastructure.Repositories;
 using UserProTasks.Application.UseCases.Projetos;
 using UserProTasks.Application.UseCases.Tarefas;
-using UserProTasks.Application.UseCases.Relatorios; // Novo
+using UserProTasks.Application.UseCases.Relatorios; 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,15 +24,15 @@ builder.Services.AddScoped<ITarefaRepository, TarefaRepository>();
 
 // Register Use Cases
 builder.Services.AddScoped<CriarProjetoUseCase>();
-builder.Services.AddScoped<ListarProjetosUsuarioUseCase>(); // Novo
-builder.Services.AddScoped<RemoverProjetoUseCase>();        // Novo
+builder.Services.AddScoped<ListarProjetosUsuarioUseCase>(); 
+builder.Services.AddScoped<RemoverProjetoUseCase>();        
 builder.Services.AddScoped<CriarTarefaUseCase>();
-builder.Services.AddScoped<ListarTarefasProjetoUseCase>();  // Novo
-builder.Services.AddScoped<VisualizarTarefaUseCase>();      // Novo
-builder.Services.AddScoped<AtualizarTarefaUseCase>();      // Novo
-builder.Services.AddScoped<RemoverTarefaUseCase>();        // Novo
-builder.Services.AddScoped<AdicionarComentarioTarefaUseCase>(); // Novo
-builder.Services.AddScoped<GerarRelatorioDesempenhoUseCase>(); // Novo
+builder.Services.AddScoped<ListarTarefasProjetoUseCase>();  
+builder.Services.AddScoped<VisualizarTarefaUseCase>();      
+builder.Services.AddScoped<AtualizarTarefaUseCase>();      
+builder.Services.AddScoped<RemoverTarefaUseCase>();        
+builder.Services.AddScoped<AdicionarComentarioTarefaUseCase>(); 
+builder.Services.AddScoped<GerarRelatorioDesempenhoUseCase>(); 
 builder.Services.AddScoped<ListarUsuariosDosProjetosUseCase>();
 
 var app = builder.Build();

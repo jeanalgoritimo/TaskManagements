@@ -12,16 +12,16 @@ namespace TaskManager.Domain.Entities
         public string Descricao { get; private set; }
         public string Usuario { get; private set; }
         public DateTime Data { get; private set; }
-        public Guid TarefaId { get; private set; } // Adicionado: Chave estrangeira para Tarefa
+        public Guid TarefaId { get; private set; } 
         public Tarefa Tarefa { get; private set; }
 
-        public HistoricoTarefa(string descricao, string usuario, Guid tarefaId) // Construtor atualizado
+        public HistoricoTarefa(string descricao, string usuario, Guid tarefaId)
         {
             Id = Guid.NewGuid();
             Descricao = descricao;
             Usuario = usuario;
             Data = DateTime.UtcNow;
-            TarefaId = tarefaId; // Atribuir a FK
+            TarefaId = tarefaId; 
         }
     }
 }

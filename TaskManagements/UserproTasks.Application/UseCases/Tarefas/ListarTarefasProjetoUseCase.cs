@@ -33,7 +33,6 @@ namespace UserProTasks.Application.UseCases.Tarefas
                 Status = t.Status,
                 Prioridade = t.Prioridade,
                 ProjetoId = t.ProjetoId
-                // UsuarioAtribuido: Se tiver essa propriedade na Tarefa, mapeie aqui
             }).ToList();
 
             return (tarefasDto, null);

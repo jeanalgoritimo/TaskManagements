@@ -16,7 +16,7 @@ namespace UserProTasks.Application.UseCases.Tarefas
             string textoComentario,
             string usuarioComentario)
         {
-            var tarefa = await _tarefaRepository.GetByIdWithDetailsAsync(tarefaId); // Precisa carregar para adicionar ao histórico/comentários
+            var tarefa = await _tarefaRepository.GetByIdWithDetailsAsync(tarefaId); 
             if (tarefa == null)
             {
                 return (false, "Tarefa não encontrada.");
@@ -24,7 +24,7 @@ namespace UserProTasks.Application.UseCases.Tarefas
 
             tarefa.AdicionarComentario(textoComentario, usuarioComentario);
 
-            await _tarefaRepository.UpdateAsync(tarefa); // O EF Core detectará as novas entidades Comentario/Historico
+            await _tarefaRepository.UpdateAsync(tarefa); 
             await _tarefaRepository.SaveChangesAsync();
 
             return (true, null);
