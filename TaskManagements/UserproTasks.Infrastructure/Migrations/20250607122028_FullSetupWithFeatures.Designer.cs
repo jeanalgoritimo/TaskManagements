@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using UserProTasks.Infrastructure.Data;
@@ -11,9 +12,11 @@ using UserProTasks.Infrastructure.Data;
 namespace UserProTasks.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250607122028_FullSetupWithFeatures")]
+    partial class FullSetupWithFeatures
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,70 @@ namespace UserProTasks.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Projeto", b =>
+                {
+                    b.Property<Guid>("ProjetoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NomeUsuario")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UsuarioId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ProjetoId");
+
+                    b.ToTable("Projetos");
+                });
+
+            modelBuilder.Entity("Tarefa", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DataVencimento")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Prioridade")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ProjetoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjetoId");
+
+                    b.ToTable("Tarefas");
+                });
 
             modelBuilder.Entity("TaskManager.Domain.Entities.Comentario", b =>
                 {
@@ -76,85 +143,20 @@ namespace UserProTasks.Infrastructure.Migrations
                     b.ToTable("HistoricoTarefas");
                 });
 
-            modelBuilder.Entity("TaskManager.Domain.Entities.Projeto", b =>
+            modelBuilder.Entity("Tarefa", b =>
                 {
-                    b.Property<Guid>("ProjetoId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.HasOne("Projeto", "Projeto")
+                        .WithMany("Tarefas")
+                        .HasForeignKey("ProjetoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Property<DateTime>("DataCriacao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Descricao")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("FuncaoUsuario")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("NomeUsuario")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("ProjetoId");
-
-                    b.ToTable("Projetos");
-                });
-
-            modelBuilder.Entity("TaskManager.Domain.Entities.Tarefa", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("DataVencimento")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Descricao")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("NomeUsuario")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Prioridade")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("ProjetoId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjetoId");
-
-                    b.ToTable("Tarefas");
+                    b.Navigation("Projeto");
                 });
 
             modelBuilder.Entity("TaskManager.Domain.Entities.Comentario", b =>
                 {
-                    b.HasOne("TaskManager.Domain.Entities.Tarefa", "Tarefa")
+                    b.HasOne("Tarefa", "Tarefa")
                         .WithMany("Comentarios")
                         .HasForeignKey("TarefaId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -165,7 +167,7 @@ namespace UserProTasks.Infrastructure.Migrations
 
             modelBuilder.Entity("TaskManager.Domain.Entities.HistoricoTarefa", b =>
                 {
-                    b.HasOne("TaskManager.Domain.Entities.Tarefa", "Tarefa")
+                    b.HasOne("Tarefa", "Tarefa")
                         .WithMany("Historico")
                         .HasForeignKey("TarefaId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -174,23 +176,12 @@ namespace UserProTasks.Infrastructure.Migrations
                     b.Navigation("Tarefa");
                 });
 
-            modelBuilder.Entity("TaskManager.Domain.Entities.Tarefa", b =>
-                {
-                    b.HasOne("TaskManager.Domain.Entities.Projeto", "Projeto")
-                        .WithMany("Tarefas")
-                        .HasForeignKey("ProjetoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Projeto");
-                });
-
-            modelBuilder.Entity("TaskManager.Domain.Entities.Projeto", b =>
+            modelBuilder.Entity("Projeto", b =>
                 {
                     b.Navigation("Tarefas");
                 });
 
-            modelBuilder.Entity("TaskManager.Domain.Entities.Tarefa", b =>
+            modelBuilder.Entity("Tarefa", b =>
                 {
                     b.Navigation("Comentarios");
 

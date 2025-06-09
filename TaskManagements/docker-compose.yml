@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine # Imagem oficial do PostgreSQL, tag alpine é mais leve
+    container_name: postgresdb # Nome do container para o PostgreSQL (usado na string de conexão da API)
+    environment:
+      POSTGRES_DB: UserProTasksDB    # Nome do banco de dados que o PostgreSQL irá criar
+      POSTGRES_USER: app_user        # Nome de usuário para acesso ao banco de dados
+      POSTGRES_PASSWORD: P@ssw0rd!sStr0ng # Senha para o usuário. **MUDE ESTA SENHA PARA ALGO SEGURO!**
+    ports:
+      - "5432:5432" # Mapeia a porta 5432 do host para a porta 5432 do container
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Volume nomeado para persistir os dados do PostgreSQL
+    healthcheck: # Healthcheck para garantir que o PostgreSQL esteja pronto
+      test: ["CMD-SHELL", "pg_isready -U app_user -d UserProTasksDB"] # Comando para verificar a prontidão do banco de dados
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s # Tempo para o container iniciar antes de começar as verificações
+
+  api:
+    build:
+      context: . # O contexto de build ainda é o diretório raiz do seu projeto
+      dockerfile: Dockerfile # Seu Dockerfile da API
+    container_name: userprotasks-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      # String de conexão para o ambiente Docker, apontando para o serviço 'postgres'
+      - ConnectionStrings__DefaultConnection=Host=postgresdb;Port=5432;Database=UserProTasksDB;Username=app_user;Password=P@ssw0rd!sStr0ng
+    ports:
+      - "8081:8080" # Porta da API
+    depends_on:
+      postgres:
+        condition: service_healthy # Garante que a API só inicie quando o PostgreSQL estiver totalmente operacional
+
+volumes:
+  postgres_data: # Definição do volume nomeado

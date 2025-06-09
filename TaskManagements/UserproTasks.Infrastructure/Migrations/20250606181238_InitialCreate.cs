@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace UserproTasks.Infrastructure.Migrations
+namespace UserProTasks.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -15,12 +15,12 @@ namespace UserproTasks.Infrastructure.Migrations
                 name: "Projeto",
                 columns: table => new
                 {
-                    ProjetoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Nome = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descricao = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DataCriacao = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UsuarioId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    NomeUsuario = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ProjetoId = table.Column<Guid>(type: "uuid", nullable: false),
+                    Nome = table.Column<string>(type: "text", nullable: false),
+                    Descricao = table.Column<string>(type: "text", nullable: false),
+                    DataCriacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UsuarioId = table.Column<Guid>(type: "uuid", nullable: false),
+                    NomeUsuario = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,13 +31,13 @@ namespace UserproTasks.Infrastructure.Migrations
                 name: "Tarefas",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Titulo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descricao = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DataVencimento = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
-                    Prioridade = table.Column<int>(type: "int", nullable: false),
-                    ProjetoId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Titulo = table.Column<string>(type: "text", nullable: false),
+                    Descricao = table.Column<string>(type: "text", nullable: false),
+                    DataVencimento = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Status = table.Column<string>(type: "text", nullable: false),
+                    Prioridade = table.Column<string>(type: "text", nullable: false),
+                    ProjetoId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -54,11 +54,11 @@ namespace UserproTasks.Infrastructure.Migrations
                 name: "Comentarios",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Texto = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Usuario = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DataCriacao = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TarefaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Texto = table.Column<string>(type: "text", nullable: false),
+                    Usuario = table.Column<string>(type: "text", nullable: false),
+                    DataCriacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TarefaId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -67,27 +67,29 @@ namespace UserproTasks.Infrastructure.Migrations
                         name: "FK_Comentarios_Tarefas_TarefaId",
                         column: x => x.TarefaId,
                         principalTable: "Tarefas",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "HistoricosTarefas",
+                name: "HistoricoTarefas",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Descricao = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Usuario = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Data = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TarefaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Descricao = table.Column<string>(type: "text", nullable: false),
+                    Usuario = table.Column<string>(type: "text", nullable: false),
+                    Data = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    TarefaId = table.Column<Guid>(type: "uuid", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HistoricosTarefas", x => x.Id);
+                    table.PrimaryKey("PK_HistoricoTarefas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_HistoricosTarefas_Tarefas_TarefaId",
+                        name: "FK_HistoricoTarefas_Tarefas_TarefaId",
                         column: x => x.TarefaId,
                         principalTable: "Tarefas",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -96,8 +98,8 @@ namespace UserproTasks.Infrastructure.Migrations
                 column: "TarefaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_HistoricosTarefas_TarefaId",
-                table: "HistoricosTarefas",
+                name: "IX_HistoricoTarefas_TarefaId",
+                table: "HistoricoTarefas",
                 column: "TarefaId");
 
             migrationBuilder.CreateIndex(
@@ -113,7 +115,7 @@ namespace UserproTasks.Infrastructure.Migrations
                 name: "Comentarios");
 
             migrationBuilder.DropTable(
-                name: "HistoricosTarefas");
+                name: "HistoricoTarefas");
 
             migrationBuilder.DropTable(
                 name: "Tarefas");

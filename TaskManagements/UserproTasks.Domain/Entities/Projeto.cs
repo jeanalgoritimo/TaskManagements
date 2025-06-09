@@ -1,36 +1,65 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using TaskManager.Domain.Enums;
+﻿using TaskManager.Domain.Enums;
 
 namespace TaskManager.Domain.Entities
 {
-    [Table("Projeto")]
     public class Projeto
     {
-        public Guid ProjetoId { get; private set; }          // Chave primária INT
-        public string Nome { get; private set; }
-        public string Descricao { get; private set; }
-        public DateTime DataCriacao { get; private set; }
+        public Guid ProjetoId { get;  set; }
+        public string Nome { get;  set; }
+        public string Descricao { get;  set; }
+        public DateTime DataCriacao { get;  set; }
+        public Guid UsuarioId { get;  set; }
+        public string NomeUsuario { get;  set; }
+        public string FuncaoUsuario { get;  set; }
 
-        public Guid UsuarioId { get; private set; }         // FK para o usuário
-        public string NomeUsuario { get; private set; }     // Nome capturado na criação
+        public const int LimiteMaximoTarefas = 20;
 
-        public List<Tarefa> Tarefas { get; private set; } = new();
+        public ICollection<Tarefa> Tarefas { get;  set; } = new List<Tarefa>();
 
-        public Projeto(string nome, string descricao, Guid usuarioId, string nomeUsuario)
+        // Construtor principal com validações
+        public Projeto(string nome, string descricao, Guid usuarioId, string nomeUsuario, string funcaoUsuario)
         {
+            if (string.IsNullOrWhiteSpace(nomeUsuario))
+                throw new ArgumentException("O nome do usuário é obrigatório.");
+
+            if (string.IsNullOrWhiteSpace(nome))
+                throw new ArgumentException("O nome do projeto não pode ser nulo ou vazio.");
+
+            if (string.IsNullOrWhiteSpace(descricao))
+                throw new ArgumentException("A descrição do projeto não pode ser nula ou vazia.");
+
+            if (string.IsNullOrWhiteSpace(funcaoUsuario))
+                throw new ArgumentException("A função do usuário é obrigatória.");
+
+            if (usuarioId == Guid.Empty)
+                throw new ArgumentException("O ID do usuário é inválido.");
+
+            ProjetoId = Guid.NewGuid();
             Nome = nome;
             Descricao = descricao;
-            DataCriacao = DateTime.Now;
             UsuarioId = usuarioId;
             NomeUsuario = nomeUsuario;
+            FuncaoUsuario = funcaoUsuario;
+            DataCriacao = DateTime.UtcNow;
         }
 
-        public bool PodeSerRemovido() => Tarefas.All(t => t.Status == StatusTarefa.Concluida);
-    }
+        // Construtor protegido para EF
+        protected Projeto() { }
 
+        // Método de atualização
+        public void AtualizarInformacoes(string novoNome, string novaDescricao)
+        {
+            if (string.IsNullOrWhiteSpace(novoNome))
+                throw new ArgumentException("O nome do projeto não pode ser nulo ou vazio.", nameof(novoNome));
+
+            Nome = novoNome;
+            Descricao = novaDescricao;
+        }
+
+        // Verifica se ainda existem tarefas pendentes
+        public virtual bool HasTarefasPendentes() // Adicione "virtual" aqui!
+        {
+            return Tarefas != null && Tarefas.Any(t => t.Status != StatusTarefa.Concluida);
+        }
+    }
 }

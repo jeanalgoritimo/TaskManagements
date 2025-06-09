@@ -1,46 +1,85 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TaskManager.Application.Interfaces;
-using TaskManager.Application.UseCases.Projetos;
-using UserproTasks.Application.DTOs;
+﻿
+using Microsoft.AspNetCore.Mvc; 
+using UserProTasks.Application.DTOs;
+using UserProTasks.Application.UseCases.Projetos; // Incluir os novos use cases
 
 namespace UserProTasks.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    // [Authorize] // Se você implementar autenticação
     public class ProjetosController : ControllerBase
     {
-        private readonly IProjetoRepository _projetoRepository;
         private readonly CriarProjetoUseCase _criarProjetoUseCase;
-
+        private readonly ListarProjetosUsuarioUseCase _listarProjetosUsuarioUseCase;
+        private readonly RemoverProjetoUseCase _removerProjetoUseCase; 
+        private readonly ListarUsuariosDosProjetosUseCase _listarUsuariosDosProjetosUseCase;
         public ProjetosController(
-            IProjetoRepository projetoRepository,
-            CriarProjetoUseCase criarProjetoUseCase)
+            CriarProjetoUseCase criarProjetoUseCase,
+            ListarProjetosUsuarioUseCase listarProjetosUsuarioUseCase,
+            RemoverProjetoUseCase removerProjetoUseCase,
+            ListarUsuariosDosProjetosUseCase listarUsuariosDosProjetosUseCase)
         {
-            _projetoRepository = projetoRepository;
             _criarProjetoUseCase = criarProjetoUseCase;
+            _listarProjetosUsuarioUseCase = listarProjetosUsuarioUseCase;
+            _removerProjetoUseCase = removerProjetoUseCase;
+            _listarUsuariosDosProjetosUseCase = listarUsuariosDosProjetosUseCase;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> ListarProjetos(Guid usuarioId)
-        {
-            var projetos = await _projetoRepository.GetByUsuarioIdAsync(usuarioId);
-            return Ok(projetos);
-        }
-
+        /// <summary>
+        /// Cria um novo projeto.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> CriarProjeto([FromBody] CriarProjetoDto dto)
         {
-            var id = await _criarProjetoUseCase.ExecutarAsync(
-                dto.Nome,
-                dto.Descricao,
-                dto.UsuarioId,
-                dto.NomeUsuario
-            );
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            return CreatedAtAction(nameof(ListarProjetos), new { usuarioId = dto.UsuarioId }, new { id });
+            // geração de quid do usuário.
+            var usuarioId = Guid.NewGuid(); 
+
+            var projeto = await _criarProjetoUseCase.ExecutarAsync(dto.Nome, dto.Descricao, usuarioId, dto.nomeUsuario, dto.funcaoUsuario);
+            return CreatedAtAction(nameof(CriarProjeto), new { id = projeto.ProjetoId }, projeto);
         }
 
+        /// <summary>
+        /// Lista todos os projetos do usuário.
+        /// </summary>
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<ProjetoDto>>> ListarProjetos(Guid usuarioId)
+        {
+             
+            var projetos = await _listarProjetosUsuarioUseCase.ExecutarAsync(usuarioId);
+            return Ok(projetos);
+        }
+
+        /// <summary>
+        /// Remove um projeto.
+        /// </summary>
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> RemoverProjeto(Guid id)
+        {
+            var (success, errorMessage) = await _removerProjetoUseCase.ExecutarAsync(id);
+
+            if (!success)
+            {
+                if (errorMessage.Contains("não encontrado"))
+                {
+                    return NotFound(new { message = errorMessage });
+                }
+                return BadRequest(new { message = errorMessage }); // Para a regra de tarefas pendentes
+            }
+
+            return NoContent(); // 204 No Content
+        }
+
+        [HttpGet("usuarios")]
+        public async Task<IActionResult> GetUsuariosDosProjetos()
+        {
+            var usuarios = await _listarUsuariosDosProjetosUseCase.ExecutarAsync();
+            return Ok(usuarios);
+        }
     }
-
-
 }
